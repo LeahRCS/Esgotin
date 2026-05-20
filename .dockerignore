@@ -1,0 +1,28 @@
+# Dependências Node.js locais
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build anterior do Wasp localmente (para que o builder container rode do zero e não copie arquivos oxidados)
+.wasp/
+
+# Arquivos do Git
+.git/
+.gitignore
+
+# Variáveis de ambiente secretas
+.env*
+!.env.example
+
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+
+# Arquivos de sistema
+.DS_Store
+
+# Outros arquivos irrelevantes
+README.md
+docker-compose*.yml
+Dockerfile*

@@ -1,0 +1,175 @@
+app esgotin {
+  wasp: { version: "^0.22.0" },
+  title: "ESGOTIN — Sistema de Esgoto Corporativo",
+
+  auth: {
+    userEntity: User,
+    methods: {
+      usernameAndPassword: {}
+    },
+    onAuthFailedRedirectTo: "/login"
+  },
+
+  db: {
+    seeds: [
+      import { seedEsgotin } from "@src/dbSeed"
+    ]
+  },
+
+  client: {
+    rootComponent: import App from "@src/App.tsx"
+  }
+}
+
+// ════════════════════════════════════════════
+// ROUTES & PAGES
+// ════════════════════════════════════════════
+
+route LoginRoute { path: "/login", to: LoginPage }
+page LoginPage {
+  component: import { LoginPage } from "@src/features/auth/LoginPage.tsx"
+}
+
+route RootRoute { path: "/", to: LandingPage }
+page LandingPage {
+  component: import { LandingPage } from "@src/features/landing/LandingPage.tsx"
+}
+
+route IscasRoute { path: "/iscas", to: IscasPage }
+page IscasPage {
+  authRequired: true,
+  component: import { IscasPage } from "@src/features/iscas/IscasPage.tsx"
+}
+
+route ContratosRoute { path: "/contratos", to: ContratosPage }
+page ContratosPage {
+  authRequired: true,
+  component: import { ContratosPage } from "@src/features/contratos/ContratosPage.tsx"
+}
+
+route MoedorRoute { path: "/moedor", to: MoedorPage }
+page MoedorPage {
+  authRequired: true,
+  component: import { MoedorPage } from "@src/features/moedor/MoedorPage.tsx"
+}
+
+route OlimpoRoute { path: "/olimpo", to: OlimpoPage }
+page OlimpoPage {
+  authRequired: true,
+  component: import { OlimpoPage } from "@src/features/olimpo/OlimpoPage.tsx"
+}
+
+route LancarIscaRoute { path: "/lancar-isca", to: LancarIscaPage }
+page LancarIscaPage {
+  authRequired: true,
+  component: import { LancarIscaPage } from "@src/features/lancar-isca/LancarIscaPage.tsx"
+}
+
+route ContratoInfamiaRoute { path: "/contrato/:jobId", to: ContratoInfamiaPage }
+page ContratoInfamiaPage {
+  authRequired: true,
+  component: import { ContratoInfamiaPage } from "@src/features/contrato-infamia/ContratoInfamiaPage.tsx"
+}
+
+route EspiadaRoute { path: "/espiada", to: EspiadaPage }
+page EspiadaPage {
+  component: import { EspiadaPage } from "@src/features/espiada/EspiadaPage.tsx"
+}
+
+route EspiadaJobRoute { path: "/espiada/:jobId", to: EspiadaJobPage }
+page EspiadaJobPage {
+  component: import { EspiadaJobPage } from "@src/features/espiada/EspiadaJobPage.tsx"
+}
+
+// ════════════════════════════════════════════
+// QUERIES  (TanStack Query — auto-managed cache)
+// ════════════════════════════════════════════
+
+query getIscas {
+  fn: import { getIscas } from "@src/features/iscas/operations",
+  entities: [Job]
+}
+
+query getContratos {
+  fn: import { getContratos } from "@src/features/contratos/operations",
+  entities: [Application, Job, User]
+}
+
+query getMoedorData {
+  fn: import { getMoedorData } from "@src/features/moedor/operations",
+  entities: [Job, Application, User]
+}
+
+query getOlimpoMetrics {
+  fn: import { getOlimpoMetrics } from "@src/features/olimpo/operations",
+  entities: [Job, Application, User]
+}
+
+query getMinhasVagas {
+  fn: import { getMinhasVagas } from "@src/features/lancar-isca/operations",
+  entities: [Job]
+}
+
+query getJobDetail {
+  fn: import { getJobDetail } from "@src/features/contrato-infamia/operations",
+  entities: [Job]
+}
+
+query getIscasPublic {
+  fn: import { getIscasPublic } from "@src/features/espiada/operations",
+  entities: [Job]
+}
+
+query getJobDetailPublic {
+  fn: import { getJobDetailPublic } from "@src/features/espiada/operations",
+  entities: [Job]
+}
+
+query getNotifications {
+  fn: import { getNotifications } from "@src/features/notifications/operations",
+  entities: [Notification]
+}
+
+// ════════════════════════════════════════════
+// ACTIONS  (Invalidate TanStack Query cache)
+// ════════════════════════════════════════════
+
+action applyToJob {
+  fn: import { applyToJob } from "@src/features/contrato-infamia/operations",
+  entities: [Application, Job, Notification]
+}
+
+action approveApplication {
+  fn: import { approveApplication } from "@src/features/moedor/operations",
+  entities: [Application, Notification]
+}
+
+action rejectApplication {
+  fn: import { rejectApplication } from "@src/features/moedor/operations",
+  entities: [Application, Notification]
+}
+
+action createJob {
+  fn: import { createJob } from "@src/features/olimpo/operations",
+  entities: [Job, User, Notification]
+}
+
+action approveProtocol {
+  fn: import { approveProtocol } from "@src/features/olimpo/operations",
+  entities: [Job, Notification]
+}
+
+action rejectProtocol {
+  fn: import { rejectProtocol } from "@src/features/olimpo/operations",
+  entities: [Job, Notification]
+}
+
+action markNotificationRead {
+  fn: import { markNotificationRead } from "@src/features/notifications/operations",
+  entities: [Notification]
+}
+
+action fireEmployee {
+  fn: import { fireEmployee } from "@src/features/contratos/operations",
+  entities: [Application, Notification, Job]
+}
