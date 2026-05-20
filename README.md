@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>☣️ Esgotin 💰</h1>
+  <h1>☣︎ Esgotin ☣︎</h1>
   <p><em>Sistema Full-Stack de Simulação, Gestão e Exaustão Organizacional</em></p>
 
   <img src="https://img.shields.io/badge/Wasp-FCA311?style=for-the-badge&logo=wasp&logoColor=black" alt="Wasp" />
