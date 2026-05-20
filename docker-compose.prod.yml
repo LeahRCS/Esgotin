@@ -15,9 +15,9 @@ services:
       context: .
       target: frontend
       args:
-        - REACT_APP_API_URL=http://localhost:3001
+        - REACT_APP_API_URL=http://localhost:3031
     ports:
-      - "80:80"
+      - "3030:80"
     depends_on:
       backend:
         condition: service_healthy
@@ -36,11 +36,14 @@ services:
     build:
       context: .
       target: backend
+    ports:
+      - "3031:3001"
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/esgotin
       - PORT=3001
       - JWT_SECRET=${JWT_SECRET}
-      - WASP_WEB_CLIENT_URL=http://localhost:80
+      - WASP_WEB_CLIENT_URL=http://localhost:3030
+      - WASP_SERVER_URL=http://localhost:3031
     depends_on:
       db:
         condition: service_healthy
@@ -58,6 +61,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=esgotin
+    ports:
+      - "3033:5432"
     volumes:
       - pgdata_prod:/var/lib/postgresql/data
     healthcheck:
@@ -75,7 +80,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - "8080:8080"
+      - "3032:8080"
     environment:
       - DOZZLE_LEVEL=info
       - DOZZLE_TAILSIZE=300

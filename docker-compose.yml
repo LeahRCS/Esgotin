@@ -4,15 +4,15 @@ services:
   app:
     # Usamos uma imagem base do Node apenas com Wasp instalado em tempo de execução
     image: node:22-alpine
-    command: sh -c "apk add --no-cache curl python3 build-base libtool autoconf automake openssl && curl -sSL https://get.wasp-lang.dev/installer.sh | sh && export PATH=\"/root/.local/bin:\$$PATH\" && npm install && wasp start"
+    command: sh -c "apk add --no-cache curl python3 build-base libtool autoconf automake openssl && npm install -g @wasp.sh/wasp-cli && npm install && wasp start"
     volumes:
       - .:/app
       # Volume anônimo para evitar que o node_modules local sobrescreva o do container
       - /app/node_modules
     working_dir: /app
     ports:
-      - "3000:3000" # Frontend (Vite)
-      - "3001:3001" # Backend (Node/Express)
+      - "3030:3000" # Frontend (Vite)
+      - "3031:3001" # Backend (Node/Express)
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/esgotin
       - JWT_SECRET=devsecret123
@@ -27,7 +27,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=esgotin
     ports:
-      - "5432:5432"
+      - "3033:5432"
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
     healthcheck:
