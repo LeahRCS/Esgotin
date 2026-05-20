@@ -7,6 +7,7 @@
   <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma" />
   <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
 </div>
 
 <br />
@@ -15,27 +16,28 @@
 
 O **Esgotin** (um nome que dispensa maiores análises freudianas) é um laboratório acadêmico disfarçado de software corporativo. Nascido da necessidade de aprovação universitária, este sistema simula processos de organização e recrutamento com uma fidelidade dolorosa à vida real: maçante no conceito, mas com uma arquitetura técnica absolutamente impecável por baixo dos panos.
 
-Afinal, se somos obrigados a modelar o tédio administrativo e a burocracia, que o façamos com tipagem estrita, consultas otimizadas e uma lógica de negócios inquebrável.
+Afinal, se somos obrigados a modelar o tédio administrativo e a burocracia, que o façamos com tipagem estrita, consultas otimizadas, orquestração de contêineres e uma lógica de negócios inquebrável.
 
-> **Crítica direta que parodia plataformas de vagas** — fluxo corporativo × operário × moderação. Inspirado de propósito na dinâmica de uma rede profissional, com tom satírico e papéis bem separados.
+> **Crítica direta que parodia plataformas de vagas** — fluxo corporativo × operário × moderação. Inspirado de propósito na dinâmica de uma rede profissional tóxica, com tom satírico, estética brutalista e papéis muito bem separados.
 
 ---
 
 ## ✨ Principais Funcionalidades
 
-- 🔐 **Autenticação:** Barreiras criptográficas que esperamos serem robustas, pois nem todo mundo deveria ter privilégios para acessar esse categórico nível gerencial.
+- 🔐 **Autenticação:** Barreiras criptográficas robustas, pois nem todo mundo deveria ter privilégios para acessar esse categórico nível gerencial.
 - 🗄️ **Modelagem Relacional (Prisma):** Tabelas e relações que amarram os dados com muito mais lógica, estabilidade e coesão do que qualquer processo seletivo do mercado atual (ou talvez não, mas vamos relevar).
 - 📊 **CRUD Completo:** Crie expectativas corporativas, Leia relatórios densos, Atualize burocracias e Delete a sua paciência (ou apenas os registros do banco mesmo).
 - ⚡ **Interface Reativa:** Porque, diferentemente das lentas engrenagens do mundo corporativo, o nosso front-end precisa responder instantaneamente aos comandos.
+- 🐳 **Pronto para Escalar:** Infraestrutura Dockerizada multi-stage com balanceamento via Nginx e persistência nativa de logs.
 
 | Funcionalidade | O que faz na prática |
 | --- | --- |
-| **Papéis (operário, corporativo, admin)** | Modelo de utilizador + guards nas operações e na UI. |
-| **Feed de "iscas" (vagas)** | Vagas `ACTIVE` visíveis ao operário; detalhe e candidatura. |
-| **Lançar vaga** | Corporativo submete vagas em `PENDING_MODERATION`. |
-| **Olimpo (moderação)** | Admin aprova (publica) ou rejeita antes de irem ao feed. |
-| **Moedor** | Corporativo vê candidatos às próprias vagas. |
-| **Auth integrada** | Wasp Auth + seed com contas de demonstração. |
+| **Papéis (operário, corporativo, admin)** | Modelo de utilizador + guards de segurança nas operações e na UI. |
+| **Feed de "Iscas" (vagas)** | Vagas `ACTIVE` visíveis ao operário; página de detalhes e candidatura. |
+| **Lançar Vaga** | O corporativo submete vagas podres que caem em `PENDING_MODERATION`. |
+| **Olimpo (moderação)** | O admin supremo aprova (publica) ou rejeita antes de irem ao feed. |
+| **Moedor** | O corporativo analisa e descarta candidatos às próprias vagas. |
+| **Auth Integrada** | Wasp Auth + script de seed populando o esgoto com contas de demonstração. |
 
 ---
 
@@ -43,149 +45,87 @@ Afinal, se somos obrigados a modelar o tédio administrativo e a burocracia, que
 
 O ecossistema escolhido garante que, enquanto o usuário finge trabalhar, o servidor trabalha de verdade:
 
-* **[Wasp](https://wasp-lang.dev/):** O *framework* que faz o trabalho sujo de conectar o front e o back-end, nos poupando do *boilerplate* infernal e permitindo focar no que importa.
+* **[Wasp](https://wasp-lang.dev/):** O *framework* que faz o trabalho sujo de conectar o front e o back-end, poupando o *boilerplate* infernal e permitindo focar no que importa.
 * **[React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/):** A dupla dinâmica para garantir que a interface seja fluida e que o código não quebre tão facilmente quanto o psicológico de um gestor no fim do mês.
 * **[Prisma ORM](https://www.prisma.io/):** Lidando com o banco de dados de forma civilizada e blindada contra falhas humanas.
+* **[Docker](https://www.docker.com/) + [Nginx](https://www.nginx.com/):** Proxy reverso universal e isolamento de ambientes para deploy à prova de balas.
 
 | Camada | Tecnologia |
 | --- | --- |
 | **Frontend** | React 19, Vite 7, React Router 7 |
 | **Dados no cliente** | TanStack Query v4 (compatível com o SDK Wasp) |
-| **Backend** | Node (gerado pelo Wasp), operações tipadas |
+| **Backend** | Node (gerado pelo Wasp), operações 100% tipadas |
 | **ORM / BD** | Prisma 5 + **PostgreSQL** |
-
-### 🤔 Porquê Wasp?
-
-Para um protótipo com rotas, auth, servidor e cliente no mesmo repositório, o **Wasp** reduz boilerplate: declaras rotas e operações no `main.wasp`, manténs o Prisma no `schema.prisma` e focas a lógica em TypeScript no `src/`. Encaixa bem quando o objetivo é **validar fluxo de negócio** (fila de moderação, visibilidade por papel) sem montar à mão toda a infraestrutura típica.
+| **Infra/DevOps** | Docker Compose Multi-stage + Nginx + Dozzle Logs |
 
 ---
 
-## 🎭 Fluxo do Protótipo (a paródia em ação)
+## 🎭 Fluxo do Protótipo (A Paródia em Ação)
 
 | Papel | O que faz |
 | --- | --- |
-| 🐀 **Operário** (`WORKER`) | Vê **Iscas** (vagas já aprovadas), abre o detalhe e candidata-se — com toda a esperança ingênua de um rato no esgoto. |
-| 🏢 **Corporativo** (`CORPORATE`) | **Lançar vaga podre** (`/lancar-isca`) envia para a fila; gere candidatos no **Moedor** — porque triturar sonhos é o core business. |
-| ⚡ **Admin** (`ADMIN`) | No **Olimpo** (`/olimpo`), aprova (publica no feed) ou rejeita propostas pendentes — com a misericórdia de um deus grego num mau dia. |
-
-Vagas novas ficam em `PENDING_MODERATION` até o admin publicar (`ACTIVE`) ou encerrar (`CLOSED`).
+| 🐀 **Operário** (`WORKER`) | Vê as **Iscas** (vagas já aprovadas), abre o detalhe e candidata-se — com toda a esperança ingênua de um rato no esgoto. |
+| 🏢 **Corporativo** (`CORPORATE`) | Usa a rota **Lançar Isca** para jogar propostas na fila; gere candidatos no **Moedor** — porque triturar sonhos é o *core business*. |
+| ⚡ **Admin** (`ADMIN`) | Lá no **Olimpo**, aprova (publica no feed) ou rejeita as propostas pendentes — com a misericórdia de um deus grego num mau dia. |
 
 ---
 
-## 🗺️ Mapeamento de Rotas
+## 🚀 Guia de Instalação (Sem Piadinhas)
 
-| Rota | Path | Quem acessa | Descrição |
-| --- | --- | --- | --- |
-| Login | `/login` | 🌐 Público | Portão de entrada do esgoto |
-| Iscas (Feed) | `/` e `/iscas` | 🐀 Operário | Feed de vagas tóxicas aprovadas |
-| Contrato Infâmia | `/contrato/:jobId` | 🐀 Operário | Detalhe da vaga + candidatura |
-| Contratos | `/contratos` | 🐀 Operário | Minhas candidaturas (e arrependimentos) |
-| Lançar Isca | `/lancar-isca` | 🏢 Corporativo | Submeter nova vaga podre |
-| Moedor | `/moedor` | 🏢 Corporativo | Triturar — digo, avaliar candidatos |
-| Olimpo | `/olimpo` | ⚡ Admin | Moderação divina das vagas |
+Existem duas formas de rodar o Esgotin: **Via Docker (Recomendado/Produção)** ou **Via Wasp Local (Desenvolvimento)**.
 
----
+### 🐳 Opção 1: Via Docker (O Jeito Sênior)
+Requisito: Apenas ter o `docker` instalado. Essa é a melhor opção para testar a aplicação em um ambiente real.
 
-## 🚀 Guia de Instalação (não tem piadinha)
-
-Para instanciar este simulador de burocracia em seu próprio terminal e ver a mágica acontecer:
-
-> **Arch Linux / CachyOS:** Se você usa CachyOS, pode rodar o script de instalação automatizado presente na raiz (`./install-esgotin-cachyos.sh`).
-> **🐧 Windows?** Este guia é para **Linux**. Se você usa Windows, instale o [WSL2](https://learn.microsoft.com/pt-br/windows/wsl/install) e execute tudo dentro dele.
-
-### Pré-requisitos
-
-- **Node.js** 22+ (exigência do Wasp 0.22)
-  ```bash
-  node --version   # deve retornar v22.x.x ou superior
-  ```
-  *(WSL2: `sudo apt update && sudo apt install -y nodejs npm`, ou use o [nvm](https://github.com/nvm-sh/nvm) — `nvm install 22`)*
-
-- **PostgreSQL** em execução
-  ```bash
-  # Verifica se está rodando:
-  pg_isready       # deve retornar "aceitando conexões"
-  ```
-  *(WSL2: `sudo apt install -y postgresql` → `sudo service postgresql start` — o `systemctl` não funciona no WSL, use `service`)*
-
-- Uma xícara de café forte e um leve desprezo por RHs, sendo a primeira optativa.
-
-(OBS: eu menti, teve piadinha sim)
-
-### Execução Local
-
-**1.** Clone o repositório para o seu santuário (ambiente local):
 ```bash
+# 1. Clone o repositório
 git clone https://github.com/LeonardoRCS/Esgotin.git
 cd Esgotin
-```
 
-**2.** Crie o banco de dados `esgotin` no PostgreSQL (se ainda não existir):
+# 2. Defina sua variável da API (mesmo que seja localhost) e suba a stack
+export REACT_APP_API_URL="http://localhost:3001"
+docker compose -f docker-compose.prod.yml up --build -d
+```
+Acesse o app em `http://localhost`. O Nginx vai rotear automaticamente a interface, e os logs ficam visíveis no incrível painel do Dozzle em `http://localhost:8080`.
+
+### 💻 Opção 2: Via Wasp Local (Desenvolvimento Tradicional)
+> **Dica Arch Linux / CachyOS:** Se você usa CachyOS, apenas execute `./install-esgotin-cachyos.sh` e seja feliz.
+
+**Pré-requisitos:** Node.js 22+ e PostgreSQL em execução na sua máquina.
+
+**1.** Crie o banco de dados e copie o `.env`:
 ```bash
 sudo -u postgres createdb esgotin
-```
-*(WSL2: `sudo -u postgres psql -c "CREATE DATABASE esgotin;"` — ou se seu usuário Postgres tiver permissão, apenas `createdb esgotin`)*
-
-**3.** Configure as variáveis de ambiente (a parte chata, mas necessária):
-```bash
 cp .env.example .env.server
 ```
-Edite o `.env.server` e ajuste `DATABASE_URL` com suas credenciais:
-```
-DATABASE_URL="postgresql://postgres:SUA_SENHA@localhost:5432/esgotin"
-```
-*(WSL2: as credenciais padrão costumam ser `postgres:postgres` — se der erro de autenticação, rode `sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"` e use a senha `postgres`)*
-
-**4.** Instale dependências + Wasp CLI (localmente, sem precisar de `sudo`):
+**2.** Instale o Wasp e as dependências:
 ```bash
 npm install
-```
-Isso instala tudo, incluindo o Wasp CLI em `node_modules/.bin/wasp`. A partir daqui, use **`npx wasp`** em vez de `wasp` diretamente.
-
-> 💡 *Se preferir instalar o Wasp globalmente:* `sudo npm i -g @wasp.sh/wasp-cli@latest` — aí pode usar `wasp` direto, sem `npx`.
-
-**5.** Compile o projeto (o Wasp gera o SDK, configura o Prisma e prepara tudo):
-```bash
 npx wasp compile
 ```
-
-**6.** Rode as migrações e o seed (populando o esgoto com dados de demo):
+**3.** Rode as migrações e popule o esgoto com os dados de demonstração:
 ```bash
 npx wasp db migrate-dev
 npx wasp db seed seedEsgotin
 ```
-Se tudo correr bem, vai ver: *"🐀 Esgoto populado com sucesso. O sistema está decompondo normalmente."*
-
-**7.** Inicie o servidor (e reze para funcionar de primeira):
+**4.** Inicie o servidor (e reze para funcionar de primeira):
 ```bash
 npx wasp start
 ```
-O cliente e o servidor sobem juntos:
-- 🌐 **Frontend:** http://localhost:3000
-- ⚙️ **Backend:** http://localhost:3001
-
-*(WSL2: acesse `http://localhost:3000` normalmente no navegador do Windows — o WSL2 faz o port forwarding automático)*
-
-EM CASO DE ALGO NÃO FUNCIONAR, NÃO NOS PROCURE!
-(seja esperto, busque por ajuda na internet)
-
-### 🧪 Testes
-
-```bash
-npm test
-```
+- 🌐 **Frontend:** `http://localhost:3000`
+- ⚙️ **Backend:** `http://localhost:3001`
 
 ---
 
-## 🐀 Contas de Demonstração (após o seed)
+## 🐀 Contas de Demonstração (Após o Seed)
 
-Para testar sem precisar criar conta (porque burocracia já basta no código):
+Para testar a toxidade corporativa de imediato:
 
 | Papel | Utilizador | Senha | O que faz |
 | --- | --- | --- | --- |
-| 🐀 Operário | `rato_operario` | `esgoto123` | Entra em **Iscas** e pode se candidatar |
-| 🏢 Corporativo | `rato_corporativo` | `explorar123` | **Lançar vaga** + **Moedor** |
-| ⚡ Moderador | `esgoto_root` | `modera123` | **Olimpo** (fila inclui `#MOD-001` de demo) |
+| 🐀 Operário | `rato_operario` | `esgoto123` | Entra em **Iscas** e pode se candidatar às armadilhas |
+| 🏢 Corporativo | `rato_corporativo` | `explorar123` | Cria vagas no **Lançar Isca** e esmaga no **Moedor** |
+| ⚡ Admin / Moderador | `esgoto_root` | `modera123` | Julga as almas no **Olimpo** |
 
 ---
 
@@ -193,48 +133,29 @@ Para testar sem precisar criar conta (porque burocracia já basta no código):
 
 ```
 Esgotin/
-├── main.wasp              # Rotas, páginas, queries, actions e seeds
-├── schema.prisma          # Modelos Prisma (User, Job, Application)
-├── vite.config.ts         # Plugin obrigatório wasp()
-├── .github/workflows/     # CI/CD
-└── src/
-    ├── App.tsx             # Root component
-    ├── dbSeed.ts           # Seed de dados de demonstração
-    ├── features/
-    │   ├── auth/           # 🔐 Login
-    │   ├── iscas/          # 🐀 Feed de vagas (operário)
-    │   ├── contratos/      # 📋 Candidaturas do operário
-    │   ├── contrato-infamia/ # 📄 Detalhe + candidatura
-    │   ├── lancar-isca/    # 🏢 Criação de vagas (corporativo)
-    │   ├── moedor/         # 🔧 Gestão de candidatos (corporativo)
-    │   └── olimpo/         # ⚡ Moderação (admin)
-    ├── components/         # Componentes reutilizáveis (auth, shell, ui)
-    ├── theme/              # 🎨 Design system (tokens + CSS tóxico)
-    ├── types/              # Tipagens compartilhadas
-    └── utils/              # Utilitários
+├── main.wasp              # O cérebro: Rotas, páginas, queries, actions e seeds
+├── schema.prisma          # Modelos de banco de dados
+├── Dockerfile             # Multi-stage build blindada e não-root
+├── docker-compose.*.yml   # Orquestração do submundo corporativo
+├── nginx.conf             # Proxy Reverso universal
+├── src/
+    ├── features/          # Funcionalidades (Olimpo, Moedor, Lançar-Isca...)
+    ├── components/        # Componentes UI (Bevel Buttons, Windows 95 Shell)
+    ├── theme/             # Design System (Tokens e CSS brutalista tóxico)
+    └── utils/             # Utilitários e formatadores
 ```
-
----
-
-## 🗓️ Roadmap (apenas se a sanidade prevalecer)
-
-- [x] Refinar UX do feed e do formulário de vagas (Refatorado com Zod + React Hook Form e Empty States).
-- [ ] Mais regras de visibilidade e estados de candidatura.
-- [ ] Testes e2e ou fluxos adicionais de moderação.
-- [x] Polimento de acessibilidade e segurança (Auditoria de IDOR, Exposição de Dados e XSS concluída).
-- [x] Mapeamento de Rotas (Veja `routes.md`).
 
 ---
 
 ## 🔒 Segurança e `npm audit`
 
-O `npm audit` pode ainda apontar vulnerabilidades em dependências transitivas do toolchain (por exemplo pacotes ligados ao SDK do Wasp). Corrigir isso costuma depender de atualização do próprio Wasp ou de `overrides` com cuidado; não é um problema específico do código deste repositório — é mais um problema existencial do ecossistema Node.js.
+A aplicação em si possui proteções contra IDOR e injeções, devidamente revisadas. O `npm audit` pode ocasionalmente apontar vulnerabilidades em dependências transitivas do toolchain (SDK do Wasp). Corrigir isso costuma depender de atualizações upstream; trate isso como um problema estrutural do ecossistema Node.js (ou, filosoficamente, do mercado de trabalho).
 
 ---
 
 ## 📜 Licença
 
-MIT — porque até o sofrimento corporativo merece ser open source.
+MIT — Porque até o sofrimento corporativo merece ser open-source.
 
 ---
 
