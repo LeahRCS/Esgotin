@@ -161,7 +161,7 @@ MIT — Porque até o sofrimento corporativo merece ser open-source.
 
 <div align="center">
   <br />
-  <em>Feito com propósito satírico (e um pouco de desespero acadêmico) por <a href="https://github.com/LeonardoRCS">Leah R.C.S.</a> em parceria com <a href="https://github.com/Monterd">Kauê Portella</a></em>
+  <em>Feito com propósito satírico (e um pouco de desespero acadêmico) por <a href="https://github.com/LeahRCS">Leah R.C.S.</a> em parceria com <a href="https://github.com/Monterd">Kauê Portella</a></em>
   <br /><br />
   <sub>Nenhum rato foi ferido durante o desenvolvimento deste projeto. Quanto aos Devs... Já não podemos dizer o mesmo.</sub>
 </div>
