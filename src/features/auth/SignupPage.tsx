@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { login, useAuth } from 'wasp/client/auth';
+import { signup, useAuth } from 'wasp/client/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -8,26 +8,24 @@ import { InsetInput } from '../../components/ui/InsetInput';
 import { BevelButton } from '../../components/ui/BevelButton';
 import '../../theme/toxicBureaucracy.css';
 
-const loginSchema = z.object({
-  username: z.string().min(1, 'O identificador é obrigatório.'),
-  password: z.string().min(1, 'A senha é obrigatória.'),
+const signupSchema = z.object({
+  username: z.string().min(3, 'O identificador deve ter no mínimo 3 caracteres.'),
+  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
   accepted: z.boolean().refine((val) => val === true, {
-    message: 'Você deve aceitar ser explorado.',
+    message: 'Você deve aceitar ceder a sua alma.',
   }),
 });
 
-type LoginFormInputs = z.infer<typeof loginSchema>;
+type SignupFormInputs = z.infer<typeof signupSchema>;
 
-export function LoginPage() {
+export function SignupPage() {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
   const { data: user, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && user) {
-      if (user.role === 'ADMIN') navigate('/olimpo', { replace: true });
-      else if (user.role === 'CORPORATE') navigate('/lancar-isca', { replace: true });
-      else navigate('/iscas', { replace: true });
+      navigate('/iscas', { replace: true });
     }
   }, [user, isLoading, navigate]);
 
@@ -37,8 +35,8 @@ export function LoginPage() {
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormInputs>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormInputs>({
+    resolver: zodResolver(signupSchema),
     mode: 'onBlur',
     defaultValues: {
       username: '',
@@ -49,16 +47,17 @@ export function LoginPage() {
 
   const accepted = watch('accepted');
 
-  async function onSubmit(data: LoginFormInputs) {
+  async function onSubmit(data: SignupFormInputs) {
     setServerError(null);
     try {
-      await login({ username: data.username, password: data.password });
-      const u = data.username.trim().toLowerCase();
-      if (u === 'esgoto_root') navigate('/olimpo');
-      else if (u === 'rato_corporativo') navigate('/lancar-isca');
-      else navigate('/iscas');
+      await signup({ username: data.username, password: data.password });
+      navigate('/iscas');
     } catch (err: any) {
-      setServerError('Acesso negado. O esgoto rejeitou você.');
+      if (err.message?.includes('already exists')) {
+        setServerError('Este identificador já foi escravizado. Tente outro.');
+      } else {
+        setServerError('Falha ao processar admissão. O sistema te rejeitou.');
+      }
     }
   }
 
@@ -78,10 +77,10 @@ export function LoginPage() {
     >
       {/* Background decorative icons */}
       <div style={{ position: 'absolute', top: '40px', right: '40px', opacity: 0.15, pointerEvents: 'none' }}>
-        <span className="material-symbols-outlined" style={{ fontSize: '160px', color: '#38FE13' }}>hub</span>
+        <span className="material-symbols-outlined" style={{ fontSize: '160px', color: '#38FE13' }}>group_add</span>
       </div>
       <div style={{ position: 'absolute', bottom: '40px', left: '40px', opacity: 0.15, pointerEvents: 'none', transform: 'rotate(180deg)' }}>
-        <span className="material-symbols-outlined" style={{ fontSize: '160px', color: '#38FE13' }}>biotech</span>
+        <span className="material-symbols-outlined" style={{ fontSize: '160px', color: '#38FE13' }}>receipt_long</span>
       </div>
 
       <div
@@ -96,7 +95,7 @@ export function LoginPage() {
           letterSpacing: '0.1em',
         }}
       >
-        System Error: Hope Not Found [0x000006E]
+        Formulário F-802: Renúncia de Direitos
       </div>
 
       <main
@@ -118,7 +117,7 @@ export function LoginPage() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)' }}>
-              <span className="material-symbols-outlined filled" style={{ color: '#38FE13', fontSize: '16px' }}>fluid</span>
+              <span className="material-symbols-outlined filled" style={{ color: '#38FE13', fontSize: '16px' }}>person_add</span>
             </div>
             <h1
               style={{
@@ -132,19 +131,18 @@ export function LoginPage() {
                 margin: 0,
               }}
             >
-              ESGOTIN — AUTENTICAÇÃO
+              ESGOTIN — ADMISSÃO
             </h1>
           </div>
           <div style={{ display: 'flex', gap: '4px' }}>
             <button 
               className="win95-titlebar-btn" 
               type="button" 
-              onClick={() => navigate('/')} 
-              title="Fugir para a Landing Page"
+              onClick={() => navigate('/login')} 
+              title="Já fui enganado antes (Voltar para o Login)"
               style={{ display: 'flex', alignItems: 'center', padding: '0 4px', gap: '0px', width: 'auto' }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>directions_run</span>
-              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>door_open</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>close</span>
             </button>
           </div>
         </header>
@@ -152,18 +150,18 @@ export function LoginPage() {
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', background: '#EEEEEE' }}>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
             <div style={{ position: 'relative', flexShrink: 0, width: '64px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="material-symbols-outlined filled" style={{ fontSize: '56px', color: '#EAB308' }}>warning</span>
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '8px' }}>
-                <span className="material-symbols-outlined filled" style={{ fontSize: '24px', color: '#106E00' }}>pest_control_rodent</span>
+              <span className="material-symbols-outlined filled" style={{ fontSize: '56px', color: '#1A1C1C' }}>contract</span>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '8px', paddingLeft: '8px' }}>
+                <span className="material-symbols-outlined filled" style={{ fontSize: '24px', color: '#BA1A1A' }}>edit_document</span>
               </div>
             </div>
             <div style={{ flex: 1, paddingTop: '4px' }}>
               <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '1rem', textTransform: 'uppercase', lineHeight: 1.2, color: '#1A1C1C', margin: '0 0 4px 0' }}>
-                Protocolo de Acesso:<br />
-                <span style={{ color: '#474EB7' }}>Mão de Obra e Burguesia</span>
+                Assinatura de Contrato:<br />
+                <span style={{ color: '#BA1A1A' }}>Vínculo Vitalício</span>
               </h2>
               <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.6875rem', color: '#3E4949', margin: 0 }}>
-                Insira as credenciais para fazer parte do processamento de dejetos corporativos.
+                Preencha os dados para gerar sua matrícula. Não nos responsabilizamos por perdas de sanidade.
               </p>
             </div>
           </div>
@@ -171,13 +169,13 @@ export function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
               <label htmlFor="username" className="tb-label-sm" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3E4949', marginBottom: '4px' }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>account_circle</span>
-                Identificador de Operário
+                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>badge</span>
+                Identificador Desejado
               </label>
               <InsetInput
                 id="username"
                 type="text"
-                placeholder="EX: RATO_0912"
+                placeholder="EX: CALOURO_ILUDIDO"
                 {...register('username')}
                 hasError={!!errors.username}
                 aria-invalid={!!errors.username}
@@ -193,13 +191,13 @@ export function LoginPage() {
 
             <div>
               <label htmlFor="password" className="tb-label-sm" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3E4949', marginBottom: '4px' }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>lock</span>
-                Código de Submissão
+                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>key</span>
+                Senha (Não será criptografada mentalmente)
               </label>
               <InsetInput
                 id="password"
                 type="password"
-                placeholder="********"
+                placeholder="No mínimo 6 caracteres..."
                 {...register('password')}
                 hasError={!!errors.password}
                 aria-invalid={!!errors.password}
@@ -244,7 +242,7 @@ export function LoginPage() {
                   )}
                 </div>
                 <span className="tb-label-sm" style={{ color: '#3E4949' }}>
-                  Aceito ser explorado por tempo indeterminado
+                  Estou ciente e aceito vender minha alma à empresa
                 </span>
               </label>
               {errors.accepted && (
@@ -261,26 +259,26 @@ export function LoginPage() {
             )}
 
             <div style={{ display: 'flex', gap: '8px', paddingTop: '8px', justifyContent: 'flex-end' }}>
-              <BevelButton type="button" onClick={() => window.history.back()} disabled={isSubmitting}>
-                Abortar
+              <BevelButton type="button" onClick={() => navigate('/login')} disabled={isSubmitting}>
+                Fugir
               </BevelButton>
               <BevelButton
                 type="submit"
                 variant="default"
                 disabled={isSubmitting}
-                icon={isSubmitting ? "hourglass_empty" : "terminal"}
+                icon={isSubmitting ? "hourglass_empty" : "draw"}
                 style={{ color: '#106E00', fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900 }}
               >
-                {isSubmitting ? 'Conectando...' : 'Conectar...'}
+                {isSubmitting ? 'Processando...' : 'Assinar Contrato'}
               </BevelButton>
             </div>
           </form>
 
-          {/* Botão Espiadinha */}
+          {/* Botão Voltar pro Login */}
           <div style={{ textAlign: 'center', paddingTop: '4px' }}>
             <button
               type="button"
-              onClick={() => navigate('/espiada')}
+              onClick={() => navigate('/login')}
               style={{
                 background: 'none',
                 border: 'none',
@@ -299,35 +297,8 @@ export function LoginPage() {
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#38FE13'; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#474EB7'; }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>visibility</span>
-              Dar uma espiadinha
-            </button>
-          </div>
-
-          <div style={{ textAlign: 'center', paddingTop: '0px' }}>
-            <button
-              type="button"
-              onClick={() => navigate('/cadastro')}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: '0.6875rem',
-                fontWeight: 700,
-                color: '#BA1A1A',
-                textDecoration: 'underline',
-                textTransform: 'uppercase',
-                padding: '4px 8px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#000000'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#BA1A1A'; }}
-            >
-              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>person_add</span>
-              Ainda não foi sugado pelo sistema? (Cadastro)
+              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>login</span>
+              Já tenho uma matrícula (Login)
             </button>
           </div>
         </div>
@@ -344,7 +315,7 @@ export function LoginPage() {
           }}
         >
           <p className="tb-label-sm" style={{ color: '#3E4949', opacity: 0.6, margin: 0 }}>
-            Status: Sistema de Esgoto Operacional
+            Processo de Admissão N-32
           </p>
         </footer>
       </main>

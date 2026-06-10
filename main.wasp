@@ -30,6 +30,11 @@ page LoginPage {
   component: import { LoginPage } from "@src/features/auth/LoginPage.tsx"
 }
 
+route SignupRoute { path: "/cadastro", to: SignupPage }
+page SignupPage {
+  component: import { SignupPage } from "@src/features/auth/SignupPage.tsx"
+}
+
 route RootRoute { path: "/", to: LandingPage }
 page LandingPage {
   component: import { LandingPage } from "@src/features/landing/LandingPage.tsx"
