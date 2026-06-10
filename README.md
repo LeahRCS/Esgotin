@@ -79,7 +79,7 @@ Requisito: Apenas ter o `docker` instalado. Essa é a melhor opção para testar
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/LeonardoRCS/Esgotin.git
+git clone https://github.com/LeahRCS/Esgotin.git
 cd Esgotin
 
 # 2. Defina sua variável da API (mesmo que seja localhost) e suba a stack
