@@ -50,7 +50,12 @@ export function SignupPage() {
   async function onSubmit(data: SignupFormInputs) {
     setServerError(null);
     try {
-      await signup({ username: data.username, password: data.password });
+      await signup({ 
+        username: data.username, 
+        password: data.password,
+        userUsername: data.username,
+        userPassword: data.password
+      });
       navigate('/iscas');
     } catch (err: any) {
       if (err.message?.includes('already exists')) {

@@ -5,7 +5,9 @@ app esgotin {
   auth: {
     userEntity: User,
     methods: {
-      usernameAndPassword: {}
+      usernameAndPassword: {
+        userSignupFields: import { userSignupFields } from "@src/features/auth/signupFields"
+      }
     },
     onAuthFailedRedirectTo: "/login"
   },
