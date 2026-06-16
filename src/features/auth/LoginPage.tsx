@@ -172,12 +172,12 @@ export function LoginPage() {
             <div>
               <label htmlFor="username" className="tb-label-sm" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3E4949', marginBottom: '4px' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>account_circle</span>
-                Identificador de Operário
+                E-mail ou Identificador
               </label>
               <InsetInput
                 id="username"
                 type="text"
-                placeholder="EX: RATO_0912"
+                placeholder="EX: operario@esgotin.com"
                 {...register('username')}
                 hasError={!!errors.username}
                 aria-invalid={!!errors.username}

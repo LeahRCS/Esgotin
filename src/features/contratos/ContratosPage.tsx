@@ -10,8 +10,10 @@ import { useContratos } from './useContratos';
 import type { Application, Job, User } from 'wasp/entities';
 
 type AppWithRelations = Application & {
-  applicant: Pick<User, 'id' | 'displayName'>;
-  job: Pick<Job, 'id' | 'code' | 'title' | 'companyName'>;
+  applicant: Pick<User, 'id' | 'displayName'> & { document?: string | null };
+  job: Pick<Job, 'id' | 'code' | 'title' | 'companyName'> & {
+    postedBy?: Pick<User, 'id' | 'displayName'> & { document?: string | null };
+  };
 };
 
 export function ContratosPage() {
@@ -90,6 +92,7 @@ export function ContratosPage() {
                     <th style={{ width: '40px' }}></th>
                     <th style={{ width: '100px' }}>{isCorporate ? 'Nome_Indivíduo' : 'Cód_Vaga'}</th>
                     <th style={{ width: '200px' }}>{isCorporate ? 'Cargo_de_Escravidão' : 'Cargo / Setor'}</th>
+                    <th style={{ width: '180px' }}>{isCorporate ? 'Documento_Indivíduo' : 'Documento_Empresa'}</th>
                     <th style={{ width: '160px' }}>{isCorporate ? 'Status_Vital' : 'Status_Protocolo'}</th>
                     <th style={{ width: '300px' }}>{isCorporate ? 'Tempo_de_Exploração' : 'Resposta_RH (Passiva-Agressiva)'}</th>
                     <th style={{ width: '120px' }}>{isCorporate ? 'Ação_Disciplinar' : 'Data_Óbito_Social'}</th>
@@ -103,6 +106,11 @@ export function ContratosPage() {
                         {isCorporate ? app.applicant?.displayName || 'Anônimo' : app.job?.code ?? '—'}
                       </td>
                       <td style={{ fontWeight: 700, textTransform: 'uppercase' }}>{app.job?.title ?? '—'}</td>
+                      <td style={{ fontFamily: "'Courier New', monospace", fontSize: '0.6875rem' }}>
+                        {isCorporate 
+                          ? (app.applicant?.document || '—') 
+                          : (app.job?.postedBy?.document ? `CNPJ/CPF: ${app.job.postedBy.document}` : '(Sigilo Corporativo)')}
+                      </td>
                       <td><StatusChip status={app.status} /></td>
                       <td style={{ fontStyle: 'italic', color: '#3E4949' }}>
                         {isCorporate 
@@ -130,7 +138,7 @@ export function ContratosPage() {
                   {Array.from({ length: Math.max(0, 16 - filteredContratos.length) }).map((_, i) => (
                     <tr key={`empty-${i}`} style={{ background: (filteredContratos.length + i) % 2 !== 0 ? 'rgba(244,243,243,0.5)' : undefined }}>
                       <td style={{ textAlign: 'center', fontWeight: 700, background: '#EEEEEE' }}>{filteredContratos.length + i + 1}</td>
-                      <td /><td /><td /><td /><td />
+                      <td /><td /><td /><td /><td /><td />
                     </tr>
                   ))}
                 </tbody>

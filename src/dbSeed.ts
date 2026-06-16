@@ -8,6 +8,41 @@ import { sanitizeAndSerializeProviderData } from 'wasp/server/auth';
 export async function seedEsgotin(prisma: PrismaClient) {
   console.log('🐀 Iniciando a inundação do esgoto...');
 
+  let admin = await prisma.user.findUnique({ where: { username: 'esgoto_root' } });
+  if (!admin) {
+    const adminPassword = process.env.ADMIN_PASSWORD || 'modera123';
+    const providerData = await sanitizeAndSerializeProviderData({
+      hashedPassword: adminPassword,
+    });
+    admin = await prisma.user.create({
+      data: {
+        username: 'esgoto_root',
+        password: 'managed-by-auth',
+        displayName: 'Moderador da Lama',
+        role: 'ADMIN',
+        status: 'drenando',
+        document: '00000000000',
+        auth: {
+          create: {
+            identities: {
+              create: {
+                providerName: 'username',
+                providerUserId: 'esgoto_root',
+                providerData,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+  console.log('✅ Admin esgoto_root inicializado.');
+
+  if (process.env.NODE_ENV === 'production' && process.env.SEED_DEMO_DATA !== 'true') {
+    console.log('✅ Modo Produção detectado. Vagas falsas e ratos de teste não serão gerados.');
+    return;
+  }
+
   let worker = await prisma.user.findUnique({ where: { username: 'rato_operario' } });
   if (!worker) {
     const providerData = await sanitizeAndSerializeProviderData({
@@ -20,6 +55,7 @@ export async function seedEsgotin(prisma: PrismaClient) {
         displayName: 'Rato Operario',
         role: 'WORKER',
         status: 'desempregado',
+        document: '11111111111',
         auth: {
           create: {
             identities: {
@@ -47,6 +83,7 @@ export async function seedEsgotin(prisma: PrismaClient) {
         displayName: 'Rato Corporativo',
         role: 'CORPORATE',
         status: 'demitindo em massa',
+        document: '22222222222222',
         auth: {
           create: {
             identities: {
@@ -62,34 +99,7 @@ export async function seedEsgotin(prisma: PrismaClient) {
     });
   }
 
-  let admin = await prisma.user.findUnique({ where: { username: 'esgoto_root' } });
-  if (!admin) {
-    const providerData = await sanitizeAndSerializeProviderData({
-      hashedPassword: 'modera123',
-    });
-    admin = await prisma.user.create({
-      data: {
-        username: 'esgoto_root',
-        password: 'managed-by-auth',
-        displayName: 'Moderador da Lama',
-        role: 'ADMIN',
-        status: 'drenando',
-        auth: {
-          create: {
-            identities: {
-              create: {
-                providerName: 'username',
-                providerUserId: 'esgoto_root',
-                providerData,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  console.log('✅ Usuários criados:', worker.username, corporate.username, admin.username);
+  console.log('✅ Usuários de teste criados:', worker.username, corporate.username, admin.username);
 
   const jobs = [
     {

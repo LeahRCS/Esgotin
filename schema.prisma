@@ -14,6 +14,7 @@ model User {
   displayName String        @default("Rato Operario")
   role        UserRole      @default(WORKER)
   status      String        @default("desempregado")
+  document    String?       @unique
   createdAt   DateTime      @default(now())
 
   applications  Application[]

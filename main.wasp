@@ -88,6 +88,11 @@ page EspiadaJobPage {
   component: import { EspiadaJobPage } from "@src/features/espiada/EspiadaJobPage.tsx"
 }
 
+route FAQRoute { path: "/faq", to: FAQPage }
+page FAQPage {
+  component: import { FAQPage } from "@src/features/faq/FAQPage.tsx"
+}
+
 // ════════════════════════════════════════════
 // QUERIES  (TanStack Query — auto-managed cache)
 // ════════════════════════════════════════════
@@ -179,4 +184,14 @@ action markNotificationRead {
 action fireEmployee {
   fn: import { fireEmployee } from "@src/features/contratos/operations",
   entities: [Application, Notification, Job]
+}
+
+action deleteNotification {
+  fn: import { deleteNotification } from "@src/features/notifications/operations",
+  entities: [Notification]
+}
+
+action deleteAllNotifications {
+  fn: import { deleteAllNotifications } from "@src/features/notifications/operations",
+  entities: [Notification]
 }

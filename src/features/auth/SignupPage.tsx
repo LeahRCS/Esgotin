@@ -9,11 +9,26 @@ import { BevelButton } from '../../components/ui/BevelButton';
 import '../../theme/toxicBureaucracy.css';
 
 const signupSchema = z.object({
-  username: z.string().min(3, 'O identificador deve ter no mínimo 3 caracteres.'),
+  username: z.string().email('O e-mail é obrigatório e deve ser válido.'),
   password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
+  role: z.enum(['WORKER', 'CORPORATE'], {
+    required_error: 'Escolha seu destino na empresa.',
+  }),
+  document: z.string().min(11, 'O documento deve ter no mínimo 11 caracteres.'),
+  name: z.string().optional(),
   accepted: z.boolean().refine((val) => val === true, {
     message: 'Você deve aceitar ceder a sua alma.',
   }),
+}).superRefine((data, ctx) => {
+  if (data.role === 'WORKER') {
+    if (!data.name || data.name.trim().length < 3) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['name'],
+        message: 'Operários devem fornecer o nome completo.',
+      });
+    }
+  }
 });
 
 type SignupFormInputs = z.infer<typeof signupSchema>;
@@ -41,11 +56,15 @@ export function SignupPage() {
     defaultValues: {
       username: '',
       password: '',
+      role: 'WORKER',
+      document: '',
+      name: '',
       accepted: false,
     },
   });
 
   const accepted = watch('accepted');
+  const role = watch('role');
 
   async function onSubmit(data: SignupFormInputs) {
     setServerError(null);
@@ -54,7 +73,10 @@ export function SignupPage() {
         username: data.username, 
         password: data.password,
         userUsername: data.username,
-        userPassword: data.password
+        userPassword: data.password,
+        userRole: data.role,
+        userDocument: data.document,
+        userName: data.name
       });
       navigate('/iscas');
     } catch (err: any) {
@@ -174,13 +196,13 @@ export function SignupPage() {
           <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
               <label htmlFor="username" className="tb-label-sm" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3E4949', marginBottom: '4px' }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>badge</span>
-                Identificador Desejado
+                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>email</span>
+                E-mail
               </label>
               <InsetInput
                 id="username"
                 type="text"
-                placeholder="EX: CALOURO_ILUDIDO"
+                placeholder="EX: operario@esgotin.com"
                 {...register('username')}
                 hasError={!!errors.username}
                 aria-invalid={!!errors.username}
@@ -212,6 +234,72 @@ export function SignupPage() {
               {errors.password && (
                 <span id="password-error" style={{ fontSize: '0.6875rem', color: '#BA1A1A', marginTop: '4px', display: 'block', fontWeight: 'bold' }}>
                   {errors.password.message}
+                </span>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '8px 0' }}>
+              <span className="tb-label-sm" style={{ color: '#3E4949', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>work</span>
+                Selecione seu destino na empresa
+              </span>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="radio" value="WORKER" {...register('role')} style={{ accentColor: '#106E00' }} />
+                  <span className="tb-label-sm" style={{ color: '#1A1C1C' }}>Operário (Ser explorado)</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="radio" value="CORPORATE" {...register('role')} style={{ accentColor: '#106E00' }} />
+                  <span className="tb-label-sm" style={{ color: '#1A1C1C' }}>Corporativo (Moer almas)</span>
+                </label>
+              </div>
+              {errors.role && (
+                <span style={{ fontSize: '0.6875rem', color: '#BA1A1A', marginTop: '4px', display: 'block', fontWeight: 'bold' }}>
+                  {errors.role.message}
+                </span>
+              )}
+            </div>
+
+            {role === 'WORKER' && (
+              <div>
+                <label htmlFor="name" className="tb-label-sm" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3E4949', marginBottom: '4px' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>person</span>
+                  Nome Completo
+                </label>
+                <InsetInput
+                  id="name"
+                  type="text"
+                  placeholder="EX: João da Silva"
+                  {...register('name')}
+                  hasError={!!errors.name}
+                  aria-invalid={!!errors.name}
+                  disabled={isSubmitting}
+                />
+                {errors.name && (
+                  <span style={{ fontSize: '0.6875rem', color: '#BA1A1A', marginTop: '4px', display: 'block', fontWeight: 'bold' }}>
+                    {errors.name.message}
+                  </span>
+                )}
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="document" className="tb-label-sm" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3E4949', marginBottom: '4px' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>badge</span>
+                {role === 'WORKER' ? 'Seu CPF' : 'CNPJ ou CPF'}
+              </label>
+              <InsetInput
+                id="document"
+                type="text"
+                placeholder={role === 'WORKER' ? "Somente números" : "CNPJ/CPF da Empresa"}
+                {...register('document')}
+                hasError={!!errors.document}
+                aria-invalid={!!errors.document}
+                disabled={isSubmitting}
+              />
+              {errors.document && (
+                <span style={{ fontSize: '0.6875rem', color: '#BA1A1A', marginTop: '4px', display: 'block', fontWeight: 'bold' }}>
+                  {errors.document.message}
                 </span>
               )}
             </div>

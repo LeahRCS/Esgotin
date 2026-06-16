@@ -15,16 +15,33 @@ export const getContratos: GetContratos<void, Application[]> = async (_args, con
       include: { 
         job: true,
         applicant: {
-          select: { id: true, username: true, displayName: true, role: true, status: true, createdAt: true }
+          select: { id: true, username: true, displayName: true, role: true, status: true, createdAt: true, document: true }
         }
       },
     });
   }
 
-  return context.entities.Application.findMany({
+  const applications = await context.entities.Application.findMany({
     where: { applicantId: context.user.id },
     orderBy: { createdAt: 'desc' },
-    include: { job: true },
+    include: { 
+      job: {
+        include: {
+          postedBy: {
+            select: { id: true, displayName: true, document: true }
+          }
+        }
+      } 
+    },
+  });
+
+  return applications.map(app => {
+    if (app.status !== 'EXPLOITED') {
+      if (app.job.postedBy) {
+        app.job.postedBy.document = null;
+      }
+    }
+    return app;
   });
 };
 

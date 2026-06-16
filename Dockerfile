@@ -55,7 +55,7 @@ USER node
 
 EXPOSE 3001
 WORKDIR /app/.wasp/out/server
-CMD ["npm", "run", "start-production"]
+CMD ["sh", "-c", "npm run db-migrate-prod && npm run db-seed && NODE_ENV=production npm run start"]
 
 # ==========================================
 # STAGE 3: Frontend Production (Nginx)

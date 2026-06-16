@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router';
 import { logout } from 'wasp/client/auth';
 import { useQuery } from 'wasp/client/operations';
-import { getNotifications, markNotificationRead } from 'wasp/client/operations';
+import { getNotifications, markNotificationRead, deleteNotification, deleteAllNotifications } from 'wasp/client/operations';
 import type { NavItem } from '../../theme/tokens';
 import type { AppRole } from '../../auth/roles';
 
@@ -24,6 +24,17 @@ export function TopAppBar({ userName = 'Rato Operário', userStatus = 'desempreg
 
   const handleRead = async (id: number) => {
     await markNotificationRead({ id });
+    refetch();
+  };
+
+  const handleDelete = async (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await deleteNotification({ id });
+    refetch();
+  };
+
+  const handleClearAll = async () => {
+    await deleteAllNotifications();
     refetch();
   };
 
@@ -108,14 +119,21 @@ export function TopAppBar({ userName = 'Rato Operário', userStatus = 'desempreg
           </div>
         )}
 
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <span 
-            className="material-symbols-outlined" 
-            style={{ color: notifOpen ? '#FFFFFF' : '#38FE13', cursor: 'pointer', fontSize: '20px' }}
-            onClick={() => { setNotifOpen(!notifOpen); setMenuOpen(false); }}
-          >
-            notifications
-          </span>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Link to="/faq" style={{ textDecoration: 'none', display: 'flex' }}>
+            <span className="material-symbols-outlined" title="FAQ (Leis Patronais)" style={{ color: '#38FE13', cursor: 'pointer', fontSize: '20px' }}>
+              help_center
+            </span>
+          </Link>
+          
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <span 
+              className="material-symbols-outlined" 
+              style={{ color: notifOpen ? '#FFFFFF' : '#38FE13', cursor: 'pointer', fontSize: '20px' }}
+              onClick={() => { setNotifOpen(!notifOpen); setMenuOpen(false); }}
+            >
+              notifications
+            </span>
           {unreadCount > 0 && (
             <div style={{
               position: 'absolute',
@@ -174,7 +192,14 @@ export function TopAppBar({ userName = 'Rato Operário', userStatus = 'desempreg
                   }}
                   onClick={() => !n.isRead && handleRead(n.id)}
                 >
-                  <span style={{ fontSize: '0.625rem', fontWeight: n.isRead ? 400 : 700, color: '#1A1C1C', fontFamily: "'Space Grotesk', sans-serif" }}>
+                  <span 
+                    className="material-symbols-outlined" 
+                    style={{ position: 'absolute', top: '4px', right: '4px', fontSize: '14px', cursor: 'pointer', color: '#BA1A1A' }}
+                    onClick={(e) => handleDelete(n.id, e)}
+                  >
+                    close
+                  </span>
+                  <span style={{ fontSize: '0.625rem', fontWeight: n.isRead ? 400 : 700, color: '#1A1C1C', fontFamily: "'Space Grotesk', sans-serif", paddingRight: '16px' }}>
                     {n.message}
                   </span>
                   <span style={{ fontSize: '0.5rem', color: '#6E7979' }}>
@@ -182,6 +207,27 @@ export function TopAppBar({ userName = 'Rato Operário', userStatus = 'desempreg
                   </span>
                 </div>
               ))}
+              {notifications.length > 0 && (
+                <button
+                  type="button"
+                  style={{
+                    marginTop: '4px',
+                    fontSize: '0.625rem',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    padding: '4px 8px',
+                    background: '#BA1A1A',
+                    border: 'none',
+                    boxShadow: 'inset 2px 2px 0px #FFB4AB, inset -2px -2px 0px #690005',
+                    color: '#FFFFFF',
+                    cursor: 'pointer'
+                  }}
+                  onClick={handleClearAll}
+                >
+                  Limpar Lixo
+                </button>
+              )}
             </div>
           )}
         </div>
