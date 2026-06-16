@@ -11,9 +11,7 @@ import '../../theme/toxicBureaucracy.css';
 const signupSchema = z.object({
   username: z.string().email('O e-mail é obrigatório e deve ser válido.'),
   password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
-  role: z.enum(['WORKER', 'CORPORATE'], {
-    required_error: 'Escolha seu destino na empresa.',
-  }),
+  role: z.enum(['WORKER', 'CORPORATE']),
   document: z.string().min(11, 'O documento deve ter no mínimo 11 caracteres.'),
   name: z.string().optional(),
   accepted: z.boolean().refine((val) => val === true, {
@@ -72,11 +70,9 @@ export function SignupPage() {
       await signup({ 
         username: data.username, 
         password: data.password,
-        userUsername: data.username,
-        userPassword: data.password,
-        userRole: data.role,
-        userDocument: data.document,
-        userName: data.name
+        role: data.role,
+        document: data.document,
+        name: data.name
       });
       navigate('/iscas');
     } catch (err: any) {
