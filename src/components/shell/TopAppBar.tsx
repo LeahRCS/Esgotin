@@ -229,7 +229,6 @@ export function TopAppBar({ userName = 'Rato Operário', userStatus = 'desempreg
                 </button>
               )}
             </div>
-            </div>
           )}
         </div>
       </div>
