@@ -229,10 +229,12 @@ export function TopAppBar({ userName = 'Rato Operário', userStatus = 'desempreg
                 </button>
               )}
             </div>
+            </div>
           )}
         </div>
+      </div>
 
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
           <span 
             className="material-symbols-outlined" 
             style={{ color: menuOpen ? '#FFFFFF' : 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '20px' }}
