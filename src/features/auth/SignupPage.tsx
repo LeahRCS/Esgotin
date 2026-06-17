@@ -75,7 +75,7 @@ export function SignupPage() {
         displayName: data.name,
         userUsername: data.username,
         userPassword: data.password
-      });
+      } as any);
       navigate('/iscas');
     } catch (err: any) {
       if (err.message?.includes('already exists')) {
