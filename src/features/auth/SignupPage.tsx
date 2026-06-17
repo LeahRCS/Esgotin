@@ -72,7 +72,7 @@ export function SignupPage() {
         password: data.password,
         role: data.role,
         document: data.document,
-        name: data.name
+        displayName: data.name
       });
       navigate('/iscas');
     } catch (err: any) {
