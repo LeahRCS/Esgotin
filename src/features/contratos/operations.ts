@@ -1,8 +1,7 @@
 import { HttpError } from 'wasp/server';
-import { type GetContratos, type FireEmployee } from 'wasp/server/operations';
 import type { Application } from 'wasp/entities';
 
-export const getContratos: GetContratos<void, Application[]> = async (_args, context) => {
+export const getContratos = async (_args: void, context: any) => {
   if (!context.user) throw new HttpError(401, 'Autenticação necessária');
 
   if (context.user.role === 'CORPORATE') {
@@ -35,7 +34,7 @@ export const getContratos: GetContratos<void, Application[]> = async (_args, con
     },
   });
 
-  return applications.map(app => {
+  return applications.map((app: any) => {
     if (app.status !== 'EXPLOITED') {
       if (app.job.postedBy) {
         app.job.postedBy.document = null;
@@ -45,9 +44,9 @@ export const getContratos: GetContratos<void, Application[]> = async (_args, con
   });
 };
 
-export const fireEmployee: FireEmployee<{ applicationId: number }, Application> = async (
-  { applicationId },
-  context
+export const fireEmployee = async (
+  { applicationId }: { applicationId: number },
+  context: any
 ) => {
   if (!context.user) throw new HttpError(401, 'Autenticação necessária');
   if (context.user.role !== 'CORPORATE') {

@@ -1,5 +1,5 @@
 import { HttpError } from 'wasp/server';
-import { type GetNotifications, type MarkNotificationRead, type DeleteNotification, type DeleteAllNotifications } from 'wasp/server/operations';
+import { type GetNotifications, type MarkNotificationRead } from 'wasp/server/operations';
 import type { Notification } from 'wasp/entities';
 
 export const getNotifications: GetNotifications<void, Notification[]> = async (_args, context) => {
@@ -31,7 +31,7 @@ export const markNotificationRead: MarkNotificationRead<{ id: number }, Notifica
   });
 };
 
-export const deleteNotification: DeleteNotification<{ id: number }, void> = async ({ id }, context) => {
+export const deleteNotification = async ({ id }: { id: number }, context: any) => {
   if (!context.user) throw new HttpError(401, 'Autenticação necessária');
   
   const notification = await context.entities.Notification.findUnique({ where: { id } });
@@ -42,7 +42,7 @@ export const deleteNotification: DeleteNotification<{ id: number }, void> = asyn
   await context.entities.Notification.delete({ where: { id } });
 };
 
-export const deleteAllNotifications: DeleteAllNotifications<void, void> = async (_args, context) => {
+export const deleteAllNotifications = async (_args: void, context: any) => {
   if (!context.user) throw new HttpError(401, 'Autenticação necessária');
 
   await context.entities.Notification.deleteMany({ where: { userId: context.user.id } });
