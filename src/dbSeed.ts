@@ -35,6 +35,14 @@ export async function seedEsgotin(prisma: PrismaClient) {
         },
       },
     });
+  } else {
+    // Forçar atualização da senha caso já exista
+    const adminPassword = process.env.ADMIN_PASSWORD || 'modera123';
+    const providerData = await sanitizeAndSerializeProviderData({ hashedPassword: adminPassword });
+    await prisma.authIdentity.updateMany({
+      where: { providerName: 'username', providerUserId: 'esgoto_root' },
+      data: { providerData }
+    });
   }
   console.log('✅ Admin esgoto_root inicializado.');
 
@@ -69,6 +77,12 @@ export async function seedEsgotin(prisma: PrismaClient) {
         },
       },
     });
+  } else {
+    const providerData = await sanitizeAndSerializeProviderData({ hashedPassword: 'esgoto123' });
+    await prisma.authIdentity.updateMany({
+      where: { providerName: 'username', providerUserId: 'rato_operario' },
+      data: { providerData }
+    });
   }
 
   let corporate = await prisma.user.findUnique({ where: { username: 'rato_corporativo' } });
@@ -96,6 +110,12 @@ export async function seedEsgotin(prisma: PrismaClient) {
           },
         },
       },
+    });
+  } else {
+    const providerData = await sanitizeAndSerializeProviderData({ hashedPassword: 'explorar123' });
+    await prisma.authIdentity.updateMany({
+      where: { providerName: 'username', providerUserId: 'rato_corporativo' },
+      data: { providerData }
     });
   }
 
