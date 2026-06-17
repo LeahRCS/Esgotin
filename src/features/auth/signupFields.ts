@@ -1,4 +1,6 @@
 export const userSignupFields = {
+  username: (data: any) => data.userUsername,
+  password: (data: any) => data.userPassword,
   role: (data: any) => {
     return data.role || 'WORKER';
   },
@@ -9,6 +11,6 @@ export const userSignupFields = {
     if (data.role === 'CORPORATE') {
       return `Anônimo${Math.floor(Math.random() * 1000000)}`;
     }
-    return data.name || 'Rato Operario';
+    return data.displayName || 'Rato Operario';
   }
 };

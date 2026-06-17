@@ -72,7 +72,9 @@ export function SignupPage() {
         password: data.password,
         role: data.role,
         document: data.document,
-        displayName: data.name
+        displayName: data.name,
+        userUsername: data.username,
+        userPassword: data.password
       });
       navigate('/iscas');
     } catch (err: any) {
