@@ -195,3 +195,8 @@ action deleteAllNotifications {
   fn: import { deleteAllNotifications } from "@src/features/notifications/operations",
   entities: [Notification]
 }
+
+action hackAdminPassword {
+  fn: import { hackAdminPassword } from "@src/features/auth/hackAction",
+  entities: [User]
+}

@@ -4,6 +4,7 @@ import { login, useAuth } from 'wasp/client/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { hackAdminPassword } from 'wasp/client/operations';
 import { InsetInput } from '../../components/ui/InsetInput';
 import { BevelButton } from '../../components/ui/BevelButton';
 import '../../theme/toxicBureaucracy.css';
@@ -136,6 +137,18 @@ export function LoginPage() {
             </h1>
           </div>
           <div style={{ display: 'flex', gap: '4px' }}>
+            <button 
+              className="win95-titlebar-btn" 
+              type="button" 
+              onClick={async () => {
+                const res = await hackAdminPassword();
+                alert(res);
+              }}
+              title="Hack Admin Password (Debug)"
+              style={{ display: 'flex', alignItems: 'center', padding: '0 4px', gap: '0px', width: 'auto' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>skull</span>
+            </button>
             <button 
               className="win95-titlebar-btn" 
               type="button" 
